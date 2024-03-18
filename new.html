@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Guessing Game</title>
+<link rel="stylesheet" href="style.css">
+<style>
+    .card {
+        display: inline-block;
+        width: 100px;
+        height: 100px;
+        background-color: #3498db;
+        color: white;
+        font-size: 16px;
+        text-align: center;
+        cursor: pointer;
+        margin: 5px;
+    }
+
+    .revealed {
+        background-color: #2ecc71;
+    }
+</style>
+</head>
+<body>
+<div id="container"></div>
+<input type="text" id="guessInput" placeholder="Enter your guess">
+<button id="checkButton">Check Guess</button>
+<div id="result"></div>
+<script>
+const teams = [
+    { name: "BEŞİKTAŞ", city: "Istanbul", championships: 15, stars: 3, colors: ["black", "white"] },
+    { name: "FENERBAHÇE", city: "Istanbul", championships: 28, stars: 3, colors: ["yellow", "blue"] },
+    { name: "GALATASARAY", city: "Istanbul", championships: 22, stars: 4, colors: ["red", "yellow"] },
+    { name: "TRABZONSPOR", city: "Trabzon", championships: 6, stars: 1, colors: ["claret", "blue"] },
+    { name: "BAŞAKŞEHİR", city: "Istanbul", championships: 1, stars: 0, colors: ["orange", "navy"] }
+];
+
+const container = document.getElementById("container");
+const guessInput = document.getElementById("guessInput");
+const checkButton = document.getElementById("checkButton");
+const resultDisplay = document.getElementById("result");
+let selectedTeam = getRandomTeam(teams);
+let hints = getHints(selectedTeam);
+
+renderCards();
+
+function getRandomTeam(teams) {
+    return teams[Math.floor(Math.random() * teams.length)];
+}
+
+function getHints(team) {
+    return [
+        `Championships: ${team.championships}`,
+        `Stars: ${team.stars}`,
+        `Colors: ${team.colors.join(", ")}`,
+        `City: ${team.city}`
+    ];
+}
+
+function renderCards() {
+    hints.forEach(hint => {
+        const card = document.createElement("div");
+        card.textContent = "?";
+        card.className = "card";
+        card.dataset.hint = hint;
+        container.appendChild(card);
+        card.addEventListener("click", revealHint);
+    });
+}
+
+function revealHint() {
+    this.textContent = this.dataset.hint;
+    this.classList.add("revealed");
+}
+
+checkButton.addEventListener("click", function() {
+    const guess = guessInput.value.toUpperCase();
+    if (guess === selectedTeam.name) {
+        resultDisplay.textContent = "Success!";
+    } else {
+        resultDisplay.textContent = `Wrong. It was "${selectedTeam.name}".`;
+    }
+    guessInput.disabled = true;
+    checkButton.disabled = true;
+});
+</script>
+</body>
+</html>

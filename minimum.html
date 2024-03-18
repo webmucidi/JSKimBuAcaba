@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Finder Game</title>
+<style>
+    .card {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        background-color: #3498db;
+        color: white;
+        font-size: 24px;
+        text-align: center;
+        cursor: pointer;
+        margin: 5px;
+    }
+
+    .revealed {
+        background-color: #2ecc71;
+    }
+</style>
+</head>
+<body>
+<div id="container"></div>
+<input type="text" id="guessInput" placeholder="Guess the word">
+<button id="guessButton">Guess</button>
+<script>
+const words = [
+    { word: "BEŞİKTAŞ", hint: "A Turkish sports club" },
+    { word: "FENERBAHÇE", hint: "A Turkish sports club" },
+    { word: "GALATASARAY", hint: "A Turkish sports club" },
+    { word: "İSTANBUL", hint: "A city in Turkey" },
+    { word: "BAŞAKŞEHİR", hint: "A district in Istanbul" },
+    { word: "KASIMPAŞA", hint: "A district in Istanbul" },
+    { word: "KARAGÜMRÜK", hint: "A district in Istanbul" },
+    { word: "PENDİK", hint: "A district in Istanbul" }
+];
+
+const container = document.getElementById("container");
+const guessInput = document.getElementById("guessInput");
+const guessButton = document.getElementById("guessButton");
+let selectedWord = {};
+
+initGame();
+
+function initGame() {
+    selectedWord = getRandomWord(words);
+    renderWord();
+    guessButton.disabled = false;
+}
+
+function getRandomWord(words) {
+    return words[Math.floor(Math.random() * words.length)];
+}
+
+function renderWord() {
+    container.innerHTML = "";
+    const letters = selectedWord.word.split("");
+    letters.forEach((letter, index) => {
+        const card = document.createElement("div");
+        card.textContent = "?";
+        card.className = "card";
+        card.dataset.index = index;
+        container.appendChild(card);
+        card.addEventListener("click", revealLetter);
+    });
+}
+
+function revealLetter() {
+    if (container.querySelectorAll(".revealed").length < 3) {
+        this.textContent = selectedWord.word[this.dataset.index];
+        this.classList.add("revealed");
+        if (container.querySelectorAll(".revealed").length === 3) {
+            container.querySelectorAll(".card").forEach(card => {
+                card.removeEventListener("click", revealLetter);
+            });
+        }
+    }
+}
+
+
+guessButton.addEventListener("click", function() {
+    const guess = guessInput.value.toUpperCase();
+    if (guess === selectedWord.word) {
+        alert("Success!");
+    } else {
+        alert(`Wrong. It was "${selectedWord.word}".`);
+    }
+    guessInput.value = "";
+    initGame();
+});
+</script>
+</body>
+</html>
